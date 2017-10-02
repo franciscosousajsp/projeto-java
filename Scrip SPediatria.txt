@@ -1,0 +1,68 @@
+create database dbspediatria
+default charset utf8
+default collate utf8_general_ci;
+
+create table tb01paciente(
+	pa01id int not null auto_increment primary key,
+	pa01cpf text (13) not null,
+	pa01nome varchar (30) not null,
+	pa01rg int (20) not null,
+	pa01nascimento date,
+	pa01nome_mae varchar(30) not null,
+	pa01nome_pai varchar(30)not null,
+	pa01sexo enum('M', 'F'),
+	pa01peso decimal(5, 2),
+	pa01altura decimal(3, 2),
+	pa01nacionalidade varchar(20) default 'Brasil'
+) default charset = utf8;
+
+create table tb02medico(
+	me02codigo int auto_increment primary key,
+	me02crm text (15) not null,
+	me02estado_crm int (2) not null,/*ESTADOS DO CRM 1-MA, 2-PI, 3-TO,... */
+	me02nome varchar (30) not null,
+	me02cpf text (13) not null,
+	me02rg int (20) not null,
+	me02endereco text (20) not null,
+	me02telefone text (13) not null
+) default charset = utf8;
+
+create table tb03especialidades(
+	es03id int auto_increment primary key,
+	es03nome_especialidades varchar (30) not null
+) default charset = utf8;
+
+create table tb04medico_espec(
+	md04id int auto_increment primary key,
+	fk0402codigo int (11) not null,
+	fk0403id int(11) not null
+)default charset = utf8;
+
+create table tb05prontuario(
+	pr05codigo int auto_increment primary key,
+	pr05data_inicial date not null,
+	fk0501id int(11) not null,	/* id do paciente */
+	fk0502codigo int(11) not null, /* codigo do medico */
+	pr05imc decimal(5, 2),
+	pr05diagnostico varchar(100) not null,
+	pr05prescricao varchar(100) not null,
+	pr05tratamento varchar(100) not null,
+	pr05evolucao varchar(100) not null,
+	pr05data_final date
+)default charset = utf8;
+
+alter table tb04medico_espec
+add foreign key (fk0402codigo)
+references tb02medico (me02codigo);
+
+alter table tb04medico_espec
+add foreign key (fk0403id)
+references tb03especialidades (es03id);
+
+alter table tb05prontuario
+add foreign key (fk0501id)
+references tb01paciente (pa01id);
+
+alter table tb05prontuario
+add foreign key (fk0502codigo)
+references tb02medico (me02codigo);
